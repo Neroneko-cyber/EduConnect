@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: educonnect-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD}
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    restart: unless-stopped
+    networks:
+      - educonnect_net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: educonnect-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=EduConnectDB;encrypt=true;trustServerCertificate=true;
+      - DB_USERNAME=${DB_USERNAME:sa}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - SPRING_MAIL_HOST=${MAIL_HOST}
+      - SPRING_MAIL_PORT=${MAIL_PORT}
+      - SPRING_MAIL_USERNAME=${MAIL_USERNAME}
+      - SPRING_MAIL_PASSWORD=${MAIL_PASSWORD}
+    depends_on:
+      - sqlserver
+    restart: unless-stopped
+    networks:
+      - educonnect_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: educonnect-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - educonnect_net
+
+volumes:
+  sqlserver_data:
+
+networks:
+  educonnect_net:
