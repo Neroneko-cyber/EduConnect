@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 import java.time.Duration;
 
@@ -21,12 +22,13 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     private StringRedisTemplate redisTemplate;
 
     private static final int MAX_REQUESTS_PER_MINUTE = 5;
-
+    private static final Logger logger = LoggerFactory.getLogger(RateLimitingFilter.class);
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        if (redisTemplate != null && request.getRequestURI().equals("/api/auth/login") && request.getMethod().equalsIgnoreCase("POST")) {
+        if (redisTemplate != null && request.getRequestURI().equals("/api/auth/login")
+                && request.getMethod().equalsIgnoreCase("POST")) {
             try {
                 String clientIp = request.getRemoteAddr();
                 String key = "rate_limit:login:" + clientIp;
@@ -40,12 +42,13 @@ public class RateLimitingFilter extends OncePerRequestFilter {
                     response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write("{\"status\": 429, \"error\": \"Too Many Requests\", \"message\": \"Terlalu banyak percobaan login. Silakan coba lagi dalam 1 menit.\"}");
+                    response.getWriter().write(
+                            "{\"status\": 429, \"error\": \"Too Many Requests\", \"message\": \"Terlalu banyak percobaan login. Silakan coba lagi dalam 1 menit.\"}");
                     return;
                 }
             } catch (Exception e) {
                 // Log the exception or ignore to allow login even if Redis is down
-                System.err.println("Redis rate limiting failed: " + e.getMessage());
+                logger.warn("Redis rate limiting failed, allowing request through: {}", e.getMessage());
             }
         }
 
