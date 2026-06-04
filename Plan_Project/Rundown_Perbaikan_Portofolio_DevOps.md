@@ -28,8 +28,8 @@ Fase 6 ░░░░░░░░░░░░░░░░░░░░░░░░�
 ### 1.1 Bersihkan Semua Hardcoded Secrets
 
 #### Task 1.1.1 — Refactor `application.yml` → gunakan environment variables
-- [ ] **File:** `backend/src/main/resources/application.yml`
-- [ ] **Aksi:** Ganti semua literal credentials dengan `${ENV_VAR:default_value}`
+- [x] **File:** `backend/src/main/resources/application.yml`
+- [x] **Aksi:** Ganti semua literal credentials dengan `${ENV_VAR:default_value}`
 
 **Sebelum (SAAT INI):**
 ```yaml
@@ -58,8 +58,8 @@ spring:
 ```
 
 #### Task 1.1.2 — Refactor `docker-compose.yml` → gunakan `.env` file
-- [ ] **File:** `docker-compose.yml`
-- [ ] **Aksi:** Ganti hardcoded `SA_PASSWORD` dan semua secrets
+- [x] **File:** `docker-compose.yml`
+- [x] **Aksi:** Ganti hardcoded `SA_PASSWORD` dan semua secrets
 
 **Sesudah (TARGET):**
 ```yaml
@@ -86,8 +86,8 @@ services:
 ```
 
 #### Task 1.1.3 — Buat `.env.example` (tanpa nilai secret)
-- [ ] **File BARU:** `.env.example` (root project)
-- [ ] **Aksi:** Template referensi bagi developer lain
+- [x] **File BARU:** `.env.example` (root project)
+- [x] **Aksi:** Template referensi bagi developer lain
 
 ```env
 # ===== DATABASE =====
@@ -109,13 +109,13 @@ SPRING_PROFILES_ACTIVE=dev
 ```
 
 #### Task 1.1.4 — Bersihkan `.env` backend yang berisi credentials asli
-- [ ] **File:** `backend/.env`
-- [ ] **Aksi:** Hapus isi literal Cloudinary URL, ganti dengan placeholder
+- [x] **File:** `backend/.env`
+- [x] **Aksi:** Hapus isi literal Cloudinary URL, ganti dengan placeholder
 
 #### Task 1.1.5 — Sanitasi dokumen `Masterplan_EduConnect.md`
-- [ ] **File:** `Plan_Project/Masterplan_EduConnect.md`
-- [ ] **Aksi:** Hapus baris yang mengekspos username `sa`, password, dan IP database (Section 2.4)
-- [ ] **Ganti dengan:**
+- [x] **File:** `Plan_Project/Masterplan_EduConnect.md`
+- [x] **Aksi:** Hapus baris yang mengekspos username `sa`, password, dan IP database (Section 2.4)
+- [x] **Ganti dengan:**
   ```
   *   **RDBMS:** Microsoft SQL Server
   *   **Host:** Dikonfigurasi via environment variable
@@ -136,7 +136,7 @@ grep -rn "nalendrabintanglazuardi" . --include="*.yml" --include="*.yaml"
 ### 1.2 Inisiasi Git Repository
 
 #### Task 1.2.1 — Buat `.gitignore` root project yang komprehensif
-- [ ] **File BARU:** `.gitignore` (root project)
+- [x] **File BARU:** `.gitignore` (root project)
 
 ```gitignore
 # ===== SECRETS =====
@@ -177,7 +177,7 @@ backend/rapor/
 ```
 
 #### Task 1.2.2 — Inisiasi Git repository
-- [ ] **Perintah:** Jalankan di root project
+- [x] **Perintah:** Jalankan di root project
 
 ```bash
 cd C:\Antigravity\A6
@@ -195,7 +195,7 @@ git commit -m "chore: initialize repository with comprehensive .gitignore"
 ```
 
 #### Task 1.2.3 — Buat initial commit yang terstruktur (Conventional Commits)
-- [ ] **Aksi:** Commit per komponen, bukan satu commit raksasa
+- [x] **Aksi:** Commit per komponen, bukan satu commit raksasa
 
 ```bash
 # Commit 1: Backend core
@@ -234,7 +234,7 @@ git commit -m "docs: add project masterplan, implementation rundown, and progres
 ```
 
 #### Task 1.2.4 — Setup branching strategy
-- [ ] **Aksi:** Buat branch structure yang menunjukkan Git workflow profesional
+- [x] **Aksi:** Buat branch structure yang menunjukkan Git workflow profesional
 
 ```bash
 # Rename default branch ke main
@@ -261,12 +261,12 @@ main ─────────────────────────
 ```
 
 #### Task 1.2.5 — Buat GitHub remote repository
-- [ ] **Aksi:** Push ke GitHub
+- [x] **Aksi:** Push ke GitHub
 ```bash
 # Buat repo di GitHub terlebih dahulu (via github.com / gh cli)
 gh repo create EduConnect --public --source=. --remote=origin
 # ATAU manual:
-git remote add origin https://github.com/<username>/EduConnect.git
+git remote add origin https://github.com/Neroneko-cyber/EduConnect
 
 git push -u origin main
 git push origin develop
@@ -437,80 +437,79 @@ git commit -m "feat(config): add multi-environment Spring Profiles (dev/prod/tes
 
 ---
 
-### 2.2 Database Migration dengan Flyway
+### 2.2 Database Migration dengan Liquibase
 
-#### Task 2.2.1 — Tambahkan Flyway dependency
-- [ ] **File:** `backend/pom.xml`
+#### Task 2.2.1 — Tambahkan Liquibase dependency
+- [x] **File:** `backend/pom.xml`
 
 ```xml
-<!-- Flyway Database Migration -->
+<!-- Liquibase for database migrations -->
 <dependency>
-    <groupId>org.flywaydb</groupId>
-    <artifactId>flyway-core</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.flywaydb</groupId>
-    <artifactId>flyway-sqlserver</artifactId>
+    <groupId>org.liquibase</groupId>
+    <artifactId>liquibase-core</artifactId>
 </dependency>
 ```
+*(Catatan: liquibase-maven-plugin juga dapat ditambahkan di tag `<build><plugins>`)*
 
-#### Task 2.2.2 — Buat migration scripts awal
-- [ ] **File BARU:** `backend/src/main/resources/db/migration/V1__create_initial_schema.sql`
+#### Task 2.2.2 — Buat master changelog file
+- [x] **File BARU:** `backend/src/main/resources/db/changelog/changelog-master.sql`
 
 ```sql
--- V1: Initial schema - EduConnect core tables
--- Dibuat berdasarkan Masterplan Section 4 (Skema Database)
+--liquibase formatted sql
 
+-- changeset EduConnect:1
+-- comment: Schema for Users Table
 CREATE TABLE users (
     id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    identity_number VARCHAR(50) UNIQUE,
-    username VARCHAR(100) UNIQUE NOT NULL,
-    name VARCHAR(150),
-    email VARCHAR(100) UNIQUE,
+    username VARCHAR(100) UNIQUE,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(20) NOT NULL,
-    tipe_guru VARCHAR(20),
+    identity_number VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    name VARCHAR(150),
+    created_at DATETIME2 DEFAULT GETDATE(),
+    role VARCHAR(50),
+    tipe_guru VARCHAR(50),
     special_subject VARCHAR(100),
-    created_at DATETIME2 DEFAULT GETDATE()
+    student_status VARCHAR(50),
+    classroom_id UNIQUEIDENTIFIER
 );
 
+-- changeset EduConnect:2
+-- comment: Schema for Classrooms Table
 CREATE TABLE classrooms (
     id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    name VARCHAR(50),
-    grade_class VARCHAR(10),
-    academic_year VARCHAR(20),
-    homeroom_teacher_id UNIQUEIDENTIFIER,
-    CONSTRAINT FK_classroom_teacher FOREIGN KEY (homeroom_teacher_id) REFERENCES users(id)
+    grade_class VARCHAR(50) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    academic_year VARCHAR(50),
+    homeroom_teacher_id UNIQUEIDENTIFIER
 );
 
--- ... (sisanya sesuai dengan seluruh entitas JPA yang ada)
+-- changeset EduConnect:3
+-- comment: Add Foreign Keys for Users and Classrooms
+ALTER TABLE users ADD CONSTRAINT FK_user_classroom FOREIGN KEY (classroom_id) REFERENCES classrooms(id);
+ALTER TABLE classrooms ADD CONSTRAINT FK_classroom_teacher FOREIGN KEY (homeroom_teacher_id) REFERENCES users(id);
 ```
 
-- [ ] **File BARU:** `backend/src/main/resources/db/migration/V2__create_communication_schema.sql`
-- [ ] **File BARU:** `backend/src/main/resources/db/migration/V3__create_academic_schema.sql`
-- [ ] **File BARU:** `backend/src/main/resources/db/migration/V4__create_asset_schema.sql`
-- [ ] **File BARU:** `backend/src/main/resources/db/migration/V5__seed_initial_data.sql`
-
-#### Task 2.2.3 — Konfigurasi Flyway di application.yml
-- [ ] **File:** `backend/src/main/resources/application.yml`
-- [ ] **Aksi:** Tambahkan konfigurasi Flyway
+#### Task 2.2.3 — Konfigurasi Liquibase di application.yml
+- [x] **File:** `backend/src/main/resources/application.yml`
+- [x] **Aksi:** Tambahkan konfigurasi Liquibase
 
 ```yaml
 spring:
-  flyway:
+  liquibase:
     enabled: true
-    baseline-on-migrate: true
-    locations: classpath:db/migration
+    default-schema: dbo
+    change-log: classpath:db/changelog/changelog-master.sql
 ```
 
 **Git commit:**
 ```bash
-git add backend/pom.xml backend/src/main/resources/db/
-git commit -m "feat(db): integrate Flyway for versioned database migrations
+git add backend/pom.xml backend/src/main/resources/db/ backend/src/main/resources/application.yml
+git commit -m "feat(db): integrate Liquibase for versioned database migrations
 
-- Add V1-V5 migration scripts for reproducible schema
+- Add master changelog script for reproducible schema
 - Replace ddl-auto: update with validate in production
-- Seed data moved from Java CommandLineRunner to SQL migration"
+- Configure Liquibase in application base config"
 ```
 
 ---

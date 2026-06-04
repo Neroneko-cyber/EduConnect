@@ -1,59 +1,143 @@
-version: '3.8'
-
 services:
+  # ===== DATABASE =====
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: educonnect-sqlserver
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=${DB_PASSWORD}
-      - MSSQL_PID=Developer
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${DB_PASSWORD}
+      MSSQL_PID: Developer
     ports:
-      - "1433:1433"
+      - "${DB_PORT:-1433}:1433"
     volumes:
       - sqlserver_data:/var/opt/mssql
     restart: unless-stopped
     networks:
       - educonnect_net
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$${SA_PASSWORD}" -Q "SELECT 1" -C -N || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "1.0"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
+  # ===== CACHE =====
+  redis:
+    image: redis:7-alpine
+    container_name: educonnect-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - educonnect_net
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.25"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # ===== BACKEND =====
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: educonnect-backend
     ports:
-      - "8080:8080"
+      - "${BACKEND_PORT:-8080}:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=EduConnectDB;encrypt=true;trustServerCertificate=true;
-      - DB_USERNAME=${DB_USERNAME:sa}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - MAIL_USERNAME=${MAIL_USERNAME}
-      - MAIL_PASSWORD=${MAIL_PASSWORD}
-      - SPRING_MAIL_HOST=${MAIL_HOST}
-      - SPRING_MAIL_PORT=${MAIL_PORT}
-      - SPRING_MAIL_USERNAME=${MAIL_USERNAME}
-      - SPRING_MAIL_PASSWORD=${MAIL_PASSWORD}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver:1433;databaseName=EduConnectDB;encrypt=true;trustServerCertificate=true;
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      CLOUDINARY_URL: ${CLOUDINARY_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
-      - sqlserver
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - educonnect_net
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
+  # ===== FRONTEND =====
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: educonnect-frontend
     ports:
-      - "80:80"
+      - "${FRONTEND_PORT:-80}:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - educonnect_net
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:80 || exit 1" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.25"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
 
 volumes:
   sqlserver_data:
+    driver: local
+  redis_data:
+    driver: local
 
 networks:
   educonnect_net:
+    driver: bridge
