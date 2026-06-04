@@ -89,6 +89,19 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- H2 Test -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Liquibase for database migrations -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
+
 		<!-- OpenPDF for PDF processing -->
 		<dependency>
 			<groupId>com.github.librepdf</groupId>
@@ -194,6 +207,10 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

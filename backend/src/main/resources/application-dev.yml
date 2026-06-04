@@ -1,0 +1,21 @@
+# Profile: Development (default lokal)
+spring:
+  datasource:
+    url: jdbc:sqlserver://127.0.0.1:1433;databaseName=EduConnectDB;encrypt=true;trustServerCertificate=true;
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  redis:
+    host: localhost
+    port: 6379
+
+logging:
+  level:
+    com.educonnect: DEBUG
+    org.springframework.security: DEBUG
