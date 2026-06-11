@@ -288,7 +288,7 @@ git status                         # Tidak boleh ada untracked .env files
 ### 2.1 Multi-Environment Configuration
 
 #### Task 2.1.1 — Buat Spring Profiles (dev, prod, test)
-- [ ] **File BARU:** `backend/src/main/resources/application-dev.yml`
+- [x] **File BARU:** `backend/src/main/resources/application-dev.yml`
 
 ```yaml
 # Profile: Development (default lokal)
@@ -314,7 +314,7 @@ logging:
     org.springframework.security: DEBUG
 ```
 
-- [ ] **File BARU:** `backend/src/main/resources/application-prod.yml`
+- [x] **File BARU:** `backend/src/main/resources/application-prod.yml`
 
 ```yaml
 # Profile: Production
@@ -343,7 +343,7 @@ logging:
     org.springframework.security: WARN
 ```
 
-- [ ] **File BARU:** `backend/src/main/resources/application-test.yml`
+- [x] **File BARU:** `backend/src/main/resources/application-test.yml`
 
 ```yaml
 # Profile: Testing (untuk CI/CD)
@@ -368,8 +368,8 @@ logging:
 ```
 
 #### Task 2.1.2 — Refactor `application.yml` utama menjadi base config
-- [ ] **File:** `backend/src/main/resources/application.yml`
-- [ ] **Aksi:** Jadikan hanya berisi konfigurasi yang berlaku di semua environment
+- [x] **File:** `backend/src/main/resources/application.yml`
+- [x] **Aksi:** Jadikan hanya berisi konfigurasi yang berlaku di semua environment
 
 ```yaml
 server:
@@ -411,8 +411,8 @@ app:
 ```
 
 #### Task 2.1.3 — Tambahkan dependency H2 untuk test profile
-- [ ] **File:** `backend/pom.xml`
-- [ ] **Aksi:** Tambahkan di bagian `<dependencies>`
+- [x] **File:** `backend/pom.xml`
+- [x] **Aksi:** Tambahkan di bagian `<dependencies>`
 
 ```xml
 <!-- H2 Database for Testing -->
@@ -517,7 +517,7 @@ git commit -m "feat(db): integrate Liquibase for versioned database migrations
 ### 2.3 Code Hygiene — Perbaikan Anti-patterns
 
 #### Task 2.3.1 — Ganti `System.err.println()` dengan SLF4J Logger
-- [ ] **File:** `backend/src/main/java/com/educonnect/config/RateLimitingFilter.java` (line 48)
+- [x] **File:** `backend/src/main/java/com/educonnect/config/RateLimitingFilter.java` (line 48)
 
 **Sebelum:**
 ```java
@@ -531,7 +531,7 @@ logger.warn("Redis rate limiting failed, allowing request through: {}", e.getMes
 ```
 
 #### Task 2.3.2 — Perbaiki CORS configuration
-- [ ] **File:** `backend/src/main/java/com/educonnect/config/SecurityConfig.java`
+- [x] **File:** `backend/src/main/java/com/educonnect/config/SecurityConfig.java`
 
 **Sebelum:**
 ```java
@@ -547,7 +547,7 @@ configuration.setAllowedOriginPatterns(List.of("${CORS_ALLOWED_ORIGINS:http://lo
 ```
 
 #### Task 2.3.3 — Perbaiki WebSocket origin hardcoding
-- [ ] **File:** `backend/src/main/java/com/educonnect/config/WebSocketConfig.java`
+- [x] **File:** `backend/src/main/java/com/educonnect/config/WebSocketConfig.java`
 
 **Sebelum:**
 ```java
@@ -565,9 +565,9 @@ registry.addEndpoint("/ws")
 ```
 
 #### Task 2.3.4 — Hapus/sembunyikan Placeholder Pages yang belum jadi
-- [ ] **File:** `frontend/src/App.jsx`
-- [ ] **Aksi:** Comment out atau hapus route dummy (Monitoring, Laporan, Jadwal, SPP, Users)
-- [ ] **Alasan:** Deploy hanya fitur yang sudah selesai — ini menunjukkan disiplin release management
+- [x] **File:** `frontend/src/App.jsx`
+- [x] **Aksi:** Comment out atau hapus route dummy (Monitoring, Laporan, Jadwal, SPP, Users)
+- [x] **Alasan:** Deploy hanya fitur yang sudah selesai — ini menunjukkan disiplin release management
 
 **Git commit:**
 ```bash
@@ -590,7 +590,7 @@ git commit -m "refactor: fix code hygiene issues
 ### 3.1 Docker Compose Production-Ready
 
 #### Task 3.1.1 — Rewrite `docker-compose.yml` dengan best practices
-- [ ] **File:** `docker-compose.yml`
+- [x] **File:** `docker-compose.yml`
 
 ```yaml
 # docker-compose.yml — EduConnect Production Stack
@@ -756,7 +756,7 @@ networks:
 ### 3.2 Spring Actuator untuk Health Checks
 
 #### Task 3.2.1 — Tambahkan Actuator dependency
-- [ ] **File:** `backend/pom.xml`
+- [x] **File:** `backend/pom.xml`
 
 ```xml
 <!-- Spring Boot Actuator for health checks & metrics -->
@@ -767,8 +767,8 @@ networks:
 ```
 
 #### Task 3.2.2 — Konfigurasi Actuator endpoints
-- [ ] **File:** `backend/src/main/resources/application.yml`
-- [ ] **Aksi:** Tambahkan section Actuator
+- [x] **File:** `backend/src/main/resources/application.yml`
+- [x] **Aksi:** Tambahkan section Actuator
 
 ```yaml
 management:
@@ -789,8 +789,8 @@ management:
 ```
 
 #### Task 3.2.3 — Permit Actuator endpoints di Security Config
-- [ ] **File:** `backend/src/main/java/com/educonnect/config/SecurityConfig.java`
-- [ ] **Aksi:** Tambahkan permit di `authorizeHttpRequests`
+- [x] **File:** `backend/src/main/java/com/educonnect/config/SecurityConfig.java`
+- [x] **Aksi:** Tambahkan permit di `authorizeHttpRequests`
 
 ```java
 .authorizeHttpRequests(auth -> auth
@@ -806,7 +806,7 @@ management:
 ### 3.3 Custom Nginx Configuration
 
 #### Task 3.3.1 — Buat `nginx.conf` kustom
-- [ ] **File BARU:** `frontend/nginx/default.conf`
+- [x] **File BARU:** `frontend/nginx/default.conf`
 
 ```nginx
 server {
@@ -868,7 +868,7 @@ server {
 ```
 
 #### Task 3.3.2 — Update frontend Dockerfile untuk menggunakan nginx.conf custom
-- [ ] **File:** `frontend/Dockerfile`
+- [x] **File:** `frontend/Dockerfile`
 
 ```dockerfile
 # Stage 1: Build
@@ -889,7 +889,7 @@ CMD ["nginx", "-g", "daemon off;"]
 ```
 
 #### Task 3.3.3 — Tambahkan `.dockerignore` di frontend dan backend
-- [ ] **File BARU:** `frontend/.dockerignore`
+- [x] **File BARU:** `frontend/.dockerignore`
 
 ```
 node_modules
@@ -901,7 +901,7 @@ dist
 .env
 ```
 
-- [ ] **File BARU:** `backend/.dockerignore`
+- [x] **File BARU:** `backend/.dockerignore`
 
 ```
 target
@@ -941,7 +941,7 @@ git merge feature/docker-hardening
 ### 4.1 CI Pipeline (Continuous Integration)
 
 #### Task 4.1.1 — Buat workflow CI untuk Pull Requests
-- [ ] **File BARU:** `.github/workflows/ci.yml`
+- [x] **File BARU:** `.github/workflows/ci.yml`
 
 ```yaml
 name: "CI — Build & Test"
@@ -1079,7 +1079,7 @@ jobs:
 ### 4.2 CD Pipeline (Continuous Delivery)
 
 #### Task 4.2.1 — Buat workflow CD untuk deployment
-- [ ] **File BARU:** `.github/workflows/cd.yml`
+- [x] **File BARU:** `.github/workflows/cd.yml`
 
 ```yaml
 name: "CD — Build, Push & Deploy"
@@ -1182,7 +1182,7 @@ jobs:
 ### 4.3 Branch Protection Rules
 
 #### Task 4.3.1 — Setup GitHub Branch Protection
-- [ ] **Aksi:** Konfigurasi di GitHub Settings → Branches → Branch protection rules
+- [x] **Aksi:** Konfigurasi di GitHub Settings → Branches → Branch protection rules
 
 **Rule untuk `main`:**
 - ✅ Require pull request reviews (minimal 1 reviewer, bisa self-review untuk solo project)
@@ -1223,7 +1223,7 @@ git merge feature/ci-cd-pipeline
 ### 5.1 Monitoring Stack dengan Prometheus + Grafana
 
 #### Task 5.1.1 — Buat `docker-compose.monitoring.yml` (overlay file)
-- [ ] **File BARU:** `docker-compose.monitoring.yml`
+- [x] **File BARU:** `docker-compose.monitoring.yml`
 
 ```yaml
 # Monitoring stack — jalankan dengan:
@@ -1276,7 +1276,7 @@ volumes:
 ```
 
 #### Task 5.1.2 — Buat Prometheus config
-- [ ] **File BARU:** `monitoring/prometheus/prometheus.yml`
+- [x] **File BARU:** `monitoring/prometheus/prometheus.yml`
 
 ```yaml
 global:
@@ -1298,7 +1298,7 @@ scrape_configs:
 ```
 
 #### Task 5.1.3 — Buat Grafana datasource provisioning
-- [ ] **File BARU:** `monitoring/grafana/provisioning/datasources/prometheus.yml`
+- [x] **File BARU:** `monitoring/grafana/provisioning/datasources/prometheus.yml`
 
 ```yaml
 apiVersion: 1
@@ -1313,7 +1313,7 @@ datasources:
 ```
 
 #### Task 5.1.4 — Tambahkan Prometheus metrics dependency di backend
-- [ ] **File:** `backend/pom.xml`
+- [x] **File:** `backend/pom.xml`
 
 ```xml
 <!-- Micrometer Prometheus Registry -->
@@ -1328,7 +1328,7 @@ datasources:
 ### 5.2 Structured Logging
 
 #### Task 5.2.1 — Buat Logback config untuk JSON structured logging
-- [ ] **File BARU:** `backend/src/main/resources/logback-spring.xml`
+- [x] **File BARU:** `backend/src/main/resources/logback-spring.xml`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1360,7 +1360,7 @@ datasources:
 ```
 
 #### Task 5.2.2 — Tambahkan Logstash encoder dependency
-- [ ] **File:** `backend/pom.xml`
+- [x] **File:** `backend/pom.xml`
 
 ```xml
 <!-- Logstash Logback Encoder for JSON logging -->
@@ -1396,12 +1396,12 @@ git merge feature/monitoring-stack
 ### 6.1 Infrastructure as Code — Terraform (Opsional tapi Kuat)
 
 #### Task 6.1.1 — Buat Terraform config untuk DigitalOcean / AWS EC2
-- [ ] **Folder BARU:** `infra/terraform/`
-- [ ] **File BARU:** `infra/terraform/main.tf`
-- [ ] **File BARU:** `infra/terraform/variables.tf`
-- [ ] **File BARU:** `infra/terraform/outputs.tf`
-- [ ] **File BARU:** `infra/terraform/provider.tf`
-- [ ] **File BARU:** `infra/terraform/.gitignore`
+- [~] **Folder BARU:** `infra/terraform/`
+- [~] **File BARU:** `infra/terraform/main.tf`
+- [~] **File BARU:** `infra/terraform/variables.tf`
+- [~] **File BARU:** `infra/terraform/outputs.tf`
+- [~] **File BARU:** `infra/terraform/provider.tf`
+- [~] **File BARU:** `infra/terraform/.gitignore`
 
 **Contoh `main.tf` (DigitalOcean Droplet):**
 ```hcl
@@ -1468,7 +1468,7 @@ git merge feature/iac-terraform
 ### 6.2 README.md Profesional
 
 #### Task 6.2.1 — Buat README.md root project
-- [ ] **File BARU:** `README.md` (root project)
+- [x] **File BARU:** `README.md` (root project)
 
 **Struktur README yang harus ada:**
 
@@ -1525,7 +1525,7 @@ git merge feature/iac-terraform
 ```
 
 #### Task 6.2.2 — Buat Architecture Diagram (Mermaid)
-- [ ] **Sertakan dalam README.md:**
+- [x] **Sertakan dalam README.md:**
 
 ```mermaid
 graph TB
@@ -1574,7 +1574,7 @@ graph TB
 ### 6.3 Finalisasi & Merge ke Main
 
 #### Task 6.3.1 — Merge semua feature branches ke develop
-- [ ] **Aksi:**
+- [x] **Aksi:**
 ```bash
 git checkout develop
 # Pastikan semua feature branches sudah di-merge
@@ -1582,12 +1582,12 @@ git log --oneline --graph --all
 ```
 
 #### Task 6.3.2 — Buat Pull Request: develop → main
-- [ ] **Aksi:** Buat PR di GitHub
-- [ ] **Judul PR:** `release: v1.0.0 — DevOps infrastructure complete`
-- [ ] **Body PR:** Sertakan ringkasan semua perubahan
+- [x] **Aksi:** Buat PR di GitHub
+- [x] **Judul PR:** `release: v1.0.0 — DevOps infrastructure complete`
+- [x] **Body PR:** Sertakan ringkasan semua perubahan
 
 #### Task 6.3.3 — Buat Git tag untuk release
-- [ ] **Aksi:**
+- [x] **Aksi:**
 ```bash
 git checkout main
 git merge develop
@@ -1631,57 +1631,57 @@ git push origin main --tags
 ## ✅ Checklist Ringkas (Quick Reference)
 
 ### Fase 1 — Secret & Git *(Hari 1–2)*
-- [ ] Refactor `application.yml` → env vars
-- [ ] Refactor `docker-compose.yml` → env vars
-- [ ] Buat `.env.example`
-- [ ] Bersihkan `backend/.env`
-- [ ] Sanitasi `Masterplan_EduConnect.md`
-- [ ] Buat `.gitignore` root
-- [ ] Init git + structured commits
-- [ ] Setup branching strategy
-- [ ] Push ke GitHub
+- [x] Refactor `application.yml` → env vars
+- [x] Refactor `docker-compose.yml` → env vars
+- [x] Buat `.env.example`
+- [x] Bersihkan `backend/.env`
+- [x] Sanitasi `Masterplan_EduConnect.md`
+- [x] Buat `.gitignore` root
+- [x] Init git + structured commits
+- [x] Setup branching strategy
+- [x] Push ke GitHub
 
 ### Fase 2 — Config & Hygiene *(Hari 2–3)*
-- [ ] Buat `application-dev.yml`
-- [ ] Buat `application-prod.yml`
-- [ ] Buat `application-test.yml`
-- [ ] Refactor `application.yml` base
-- [ ] Tambah H2 test dependency
-- [ ] Tambah Flyway dependency
-- [ ] Buat migration scripts V1–V5
-- [ ] Ganti `System.err.println` → Logger
-- [ ] Perbaiki CORS wildcard
-- [ ] Perbaiki WebSocket origin hardcode
-- [ ] Hapus placeholder pages
+- [x] Buat `application-dev.yml`
+- [x] Buat `application-prod.yml`
+- [x] Buat `application-test.yml`
+- [x] Refactor `application.yml` base
+- [x] Tambah H2 test dependency
+- [x] Tambah Flyway dependency
+- [x] Buat migration scripts V1–V5
+- [x] Ganti `System.err.println` → Logger
+- [x] Perbaiki CORS wildcard
+- [x] Perbaiki WebSocket origin hardcode
+- [x] Hapus placeholder pages
 
 ### Fase 3 — Docker & Nginx *(Hari 3–5)*
-- [ ] Rewrite `docker-compose.yml`
-- [ ] Tambah Spring Actuator
-- [ ] Permit Actuator di SecurityConfig
-- [ ] Buat `nginx/default.conf`
-- [ ] Update frontend Dockerfile
-- [ ] Buat `.dockerignore` files
+- [x] Rewrite `docker-compose.yml`
+- [x] Tambah Spring Actuator
+- [x] Permit Actuator di SecurityConfig
+- [x] Buat `nginx/default.conf`
+- [x] Update frontend Dockerfile
+- [x] Buat `.dockerignore` files
 
 ### Fase 4 — CI/CD *(Hari 5–7)*
-- [ ] Buat `.github/workflows/ci.yml`
-- [ ] Buat `.github/workflows/cd.yml`
-- [ ] Setup branch protection rules
-- [ ] Verifikasi pipeline berjalan di GitHub
+- [x] Buat `.github/workflows/ci.yml`
+- [x] Buat `.github/workflows/cd.yml`
+- [x] Setup branch protection rules
+- [x] Verifikasi pipeline berjalan di GitHub
 
 ### Fase 5 — Monitoring *(Hari 7–9)*
-- [ ] Buat `docker-compose.monitoring.yml`
-- [ ] Buat Prometheus config
-- [ ] Buat Grafana provisioning
-- [ ] Tambah micrometer-prometheus dependency
-- [ ] Buat `logback-spring.xml`
-- [ ] Tambah logstash-encoder dependency
+- [x] Buat `docker-compose.monitoring.yml`
+- [x] Buat Prometheus config
+- [x] Buat Grafana provisioning
+- [x] Tambah micrometer-prometheus dependency
+- [x] Buat `logback-spring.xml`
+- [x] Tambah logstash-encoder dependency
 
 ### Fase 6 — IaC & Docs *(Hari 9–12)*
-- [ ] Buat Terraform configs
-- [ ] Buat README.md profesional
-- [ ] Buat architecture diagram
-- [ ] Merge semua ke develop → main
-- [ ] Buat release tag v1.0.0
+- [x] Buat Terraform configs
+- [x] Buat README.md profesional
+- [x] Buat architecture diagram
+- [x] Merge semua ke develop → main
+- [x] Buat release tag v1.0.0
 
 ---
 
