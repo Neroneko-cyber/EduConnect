@@ -1,0 +1,44 @@
+services:
+  # ==== PROMETHEUS ====
+  prometheus:
+    image: prom/prometheus:v2.53.2
+    container_name: educonnect-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/rules.yml:/etc/prometheus/rules.yml:ro
+    restart: unless-stopped
+    networks:
+      - educonnect_net
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
+
+  # ==== GRAFANA ====
+  grafana:
+    image: grafana/grafana:12.1.0
+    container_name: educonnect-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP: ${GF_USERS_ALLOW_SIGN_UP:-false}
+
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning/datasources/prometheus.yaml:/etc/grafana/provisioning/datasources/prometheus.yaml:ro
+      - ./monitoring/grafana/dashboards/node.json:/etc/grafana/provisioning/dashboards/node.json:ro
+    networks:
+      - educonnect_net
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "256M"
+volumes:
+  grafana_data:
