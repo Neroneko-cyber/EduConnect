@@ -155,6 +155,25 @@
 			<version>2.5.0</version>
 		</dependency>
 
+		<!-- Spring Micrometer -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<!-- Prometheus Micrometer registry -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+
+		<!-- Logstash Logback Encoder for JSON logging -->
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>7.4</version>
+		</dependency>
+
 		<!-- Spring Mail -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
